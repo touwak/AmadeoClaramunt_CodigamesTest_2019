@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5233637214076052864}
   m_Layer: 0
   m_Name: Gem
-  m_TagString: Untagged
+  m_TagString: Gem
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -56,6 +56,7 @@ MeshRenderer:
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
@@ -67,6 +68,7 @@ MeshRenderer:
   m_ProbeAnchor: {fileID: 0}
   m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
   m_PreserveUVs: 0
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
@@ -104,4 +106,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08dfc5b64c1cf2849b9ddd023d507886, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OnGemChange: {fileID: 11400000, guid: a4f23b13e6bb3434a9ce08730b14adc1, type: 2}

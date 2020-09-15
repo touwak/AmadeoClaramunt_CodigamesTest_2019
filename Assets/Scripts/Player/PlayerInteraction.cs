@@ -2,14 +2,15 @@
 
 public class PlayerInteraction : MonoBehaviour
 {
-  private void OnCollisionEnter(Collision _collision)
-  {
-    // Mummy
-    if (_collision.collider.CompareTag("Mummy"))
+    private void OnCollisionEnter(Collision collision)
     {
-      // Disable the player and rest a life
-      gameObject.SetActive(false);
-      GameManager.instance.removePlayer();
+        if (collision.collider.CompareTag("Mummy"))
+        {
+            m_gameManager.RemovePlayer();
+            gameObject.SetActive(false);
+        }
     }
-  }
+
+    [SerializeField]
+    GameManager m_gameManager;
 }

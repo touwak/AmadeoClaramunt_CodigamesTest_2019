@@ -4,78 +4,52 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerNavigation : MonoBehaviour
 {
-
-  #region VARIABLES
-  NavMeshAgent navAgent;
-  float nextPositionRadius = 2.0f;
-  Camera mainCamera;
-  LayerMask terrainLayerMask;
-  private Animator myAnimator;
-  #endregion
-
-  private void Start()
-  {
-    navAgent = GetComponent<NavMeshAgent>();
-    myAnimator = GetComponent<Animator>();
-    mainCamera = GameManager.instance.mainCamera;
-    terrainLayerMask = 9;
-  }
-
-  void Update()
-  {
-    if (!GameManager.instance.gamePaused) {
-      SetNewDestination();
-      // Set the variables for the animator
-      myAnimator.SetFloat("Speed", navAgent.velocity.magnitude / navAgent.speed);
-    }
-  }
-
-  /// <summary>
-  /// Detect the position on the screen and move the player
-  /// </summary>
-  void SetNewDestination()
-  {
-    if(Input.touchCount == 1)
+    private void Start()
     {
-      if (Input.GetTouch(0).phase != TouchPhase.Moved)
-      {
-        if (Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-          Ray screenRay = mainCamera.ScreenPointToRay(Input.GetTouch(0).position);
-          RaycastHit hit;
-
-          if (Physics.Raycast(screenRay, out hit))
-          {
-            Vector3 newDestination = RandomNavCircle(
-            hit.point,
-            nextPositionRadius,
-            -1
-            );
-
-            navAgent.SetDestination(newDestination);
-          }
-        }
-      }
+        m_mainCamera = Camera.main;
     }
-  }
 
-  /// <summary>
-  /// Return a position inside a circle
-  /// </summary>
-  /// <param name="_originPosition"> the desired position </param>
-  /// <param name="_radius"> The radius of the circle </param>
-  /// <param name="_layerMask"> Layered mask </param>
-  /// <returns> A position inside a circle </returns>
-  Vector3 RandomNavCircle(Vector3 _originPosition, float _radius, int _layerMask)
-  {
-    Vector3 randomDirection = Random.insideUnitCircle * _radius;
-    randomDirection += _originPosition;
+    public void SetNewDestination()
+    {
+        if (Input.touchCount == 1)
+        {
+            if (Input.GetTouch(0).phase != TouchPhase.Moved)
+            {
+                if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                {
+                    Ray screenRay = m_mainCamera.ScreenPointToRay(Input.GetTouch(0).position);
+                    RaycastHit hit;
 
-    NavMeshHit navHit;
+                    if (Physics.Raycast(screenRay, out hit))
+                    {
+                        m_navAgent.SetDestination(RandomNavPoint(hit.point, -1));
+                    }
+                }
+            }
+        }
 
-    NavMesh.SamplePosition(randomDirection, out navHit, _radius, _layerMask);
+        if (m_navAgent.velocity.magnitude > 0f)
+        {
+            m_playerAnimator.SetFloat("Speed", m_navAgent.velocity.magnitude / m_navAgent.speed);
+        }
+    }
 
-    return navHit.position;
-  }
+    private Vector3 RandomNavPoint(Vector3 originPosition, int layerMask)
+    {
+        Vector3 randomPosition = Random.insideUnitSphere * k_nextPositionRadius;
+        randomPosition += originPosition;
 
+        NavMeshHit navHit;
+        NavMesh.SamplePosition(randomPosition, out navHit, k_nextPositionRadius, layerMask);
+
+        return navHit.position;
+    }
+
+    [SerializeField]
+    private NavMeshAgent m_navAgent;
+    [SerializeField]
+    private Animator m_playerAnimator;
+    private Camera m_mainCamera;
+    
+    private const float k_nextPositionRadius = 2.0f;
 }

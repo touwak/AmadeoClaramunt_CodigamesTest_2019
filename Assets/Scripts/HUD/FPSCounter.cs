@@ -1,28 +1,17 @@
-﻿using UnityEngine;
-using TMPro;
+﻿using TMPro;
+using UnityEngine;
 
 public class FPSCounter : MonoBehaviour
 {
-  #region VARIABLES
-  [SerializeField]
-  private TextMeshProUGUI fpsText;
-  private float deltaTime = 0.0f;
-  #endregion
+    public void CalculateFPS()
+    {
+        m_deltaTime += (Time.unscaledDeltaTime - m_deltaTime) * 0.1f;
+        float fps = 1.0f / m_deltaTime;
 
+        m_fpsText.text = fps.ToString("F0");
+    }
 
-  private void Update()
-  {
-    CalculateFPS();
-  }
-
-  /// <summary>
-  /// Calculate the FPS
-  /// </summary>
-  private void CalculateFPS()
-  {
-    deltaTime += (Time.unscaledDeltaTime - deltaTime) * 0.1f;
-    float fps = 1.0f / deltaTime;
-
-    fpsText.text = fps.ToString("F0");
-  }
+    [SerializeField]
+    private TextMeshProUGUI m_fpsText;
+    private float m_deltaTime = 0.0f;
 }

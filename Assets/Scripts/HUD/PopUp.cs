@@ -1,49 +1,40 @@
-﻿using UnityEngine;
+﻿using DG.Tweening;
+using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
-using DG.Tweening;
 
 
-public class PopUp : MonoBehaviour {
-  #region VARIABLES
-  [SerializeField]
-  public Image background;
-  [SerializeField]
-  public Transform content;
-  [SerializeField]
-  public Button startButton;
-
-  public UnityEvent onClose;
-
-  [HideInInspector]
-  public bool opened = false;
-  #endregion
-
-  /// <summary>
-  /// Switch between the open and closed animation
-  /// </summary>
-  public void toggle()
-  {
-    if (!opened)
+public class PopUp : MonoBehaviour
+{
+    public void Toggle()
     {
-      Sequence popupAnimation;
-      gameObject.SetActive(true);
-      popupAnimation = DOTween.Sequence();
-      popupAnimation.Append(background.DOFade(0, 0.5f).From().SetEase(Ease.Linear));
-      popupAnimation.Join(content.DOScale(0, 0.5f).From().SetEase(Ease.OutBack));
-      popupAnimation.OnComplete(() => startButton.interactable = true);
-      opened = true;
+        if (!m_opened)
+        {
+            Sequence popupAnimation;
+            gameObject.SetActive(true);
+            popupAnimation = DOTween.Sequence();
+            popupAnimation.Append(m_background.DOFade(0, 0.5f).From().SetEase(Ease.Linear));
+            popupAnimation.Join(m_content.DOScale(0, 0.5f).From().SetEase(Ease.OutBack));
+            popupAnimation.OnComplete(() => m_startButton.interactable = true);
+            m_opened = true;
+        }
+        else
+        {
+            Sequence popupAnimation;
+            popupAnimation = DOTween.Sequence();
+            popupAnimation.OnStart(() => m_startButton.interactable = false);
+            popupAnimation.Append(m_background.DOFade(0, 0.5f).SetEase(Ease.Linear));
+            popupAnimation.Join(m_content.DOScale(0, 0.5f).SetEase(Ease.InBack));
+            m_opened = false;
+        }
     }
-    else
-    {
-      Sequence popupAnimation;
-      popupAnimation = DOTween.Sequence();
-      popupAnimation.OnStart(() => startButton.interactable = false);
-      popupAnimation.Append(background.DOFade(0, 0.5f).SetEase(Ease.Linear));
-      popupAnimation.Join(content.DOScale(0, 0.5f).SetEase(Ease.InBack));
-      popupAnimation.OnComplete(() => onClose.Invoke());
-      opened = false;
-    }
-  }
 
+    [SerializeField]
+    private Image m_background;
+    [SerializeField]
+    private Transform m_content;
+    [SerializeField]
+    private Button m_startButton;
+    [SerializeField]
+    private bool m_opened = false;
 }

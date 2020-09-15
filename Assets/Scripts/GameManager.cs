@@ -1,102 +1,83 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
-using TMPro;
 
 public class GameManager : MonoBehaviour
 {
-  #region VARIABLES
-  public static GameManager instance;
-  [SerializeField] private HUDController HUD;
-  [SerializeField] private Transform gemsParent;
-  [SerializeField] private PopUp startPopUp;
-  [SerializeField] private PopUp endPopUp;
-
-  [HideInInspector]
-  public Camera mainCamera;
-
-  [HideInInspector]
-  public bool gamePaused;
-
-  private int totalPlayersAlife;
-
-  // Gems
-  int totalGems;
-  public int TotalGems 
+    public void RemovePlayer()
     {
-    get 
-      {
-      return gemsParent.childCount;
+        if (m_Hud.RemoveLife() <= 0)
+        {
+            GameOver();
+        }
     }
-    set 
-      {
-      totalGems = value;
-      HUD.SetNumGems(totalGems);
 
-      // Check if the player has take all the gems and finish the game
-      if(totalGems <= 0)
-      {
-        GameOver();
-      }
-    }
-  }
-  #endregion
-
-  private void Awake()
-  {
-    DontDestroyOnLoad(gameObject);
-
-    // Singleton
-    if (instance == null)
+    public void RestAGem()
     {
-      instance = this;
+        m_totalGems--;
+        m_Hud.SetNumGems(m_totalGems);
+
+        if (m_totalGems <= 0)
+        {
+            GameOver();
+        }
     }
-    else if (instance != this)
+
+    public void StartGame()
     {
-      Destroy(gameObject);
+        m_gamePaused = false;
     }
 
-    // Set the camera
-    mainCamera = Camera.main;
+    private void Update()
+    {
+        if (!m_gamePaused)
+        {
+            foreach (var player in m_players)
+            {
+                if (player.gameObject.activeInHierarchy)
+                {
+                    player.SetNewDestination();
+                }
+            }
 
-    gamePaused = true;
-  }
+            foreach (var mummy in m_mummies)
+            {
+                mummy.GoToNextPoint();
+            }
 
-  private void Start()
-  {
-    startPopUp.onClose.AddListener(StartGame);
-    startPopUp.toggle();
+            m_cameraMovement.MoveCamera();
+        }
+    }
 
-    TotalGems = gemsParent.childCount;
-  }
+    private void FixedUpdate()
+    {
+        m_fpsCounter.CalculateFPS();
+    }
+    private void GameOver()
+    {
+        m_gamePaused = true;
+        m_endPopUp.Toggle();
+    }
 
-  /// <summary>
-  /// Remove one player and check if is game over
-  /// </summary>
-  public void removePlayer()
-  {
-    totalPlayersAlife = HUD.RemoveLife();
     
-    if(totalPlayersAlife <= 0)
-    {
-      GameOver();
-    }
-  }
+    [SerializeField]
+    private HUDController m_Hud;
+    [SerializeField]
+    private PopUp m_endPopUp;
+    [SerializeField]
+    private FPSCounter m_fpsCounter;
 
-  /// <summary>
-  /// Start the game
-  /// </summary>
-  private void StartGame()
-  {
-    gamePaused = false;
-  }
+    [Space(10)]
 
-  /// <summary>
-  /// Finish the game
-  /// </summary>
-  private void GameOver()
-  {
-    gamePaused = true;
-    endPopUp.toggle();
-  }
+    [SerializeField]
+    private CameraMovement m_cameraMovement;
+
+    [Space(10)]
+
+    [SerializeField]
+    private List<PlayerNavigation> m_players;
+    [SerializeField]
+    private List<MummyNavigation> m_mummies;
+
+    private bool m_gamePaused = true;
+    private int m_totalGems = 10;
 }
