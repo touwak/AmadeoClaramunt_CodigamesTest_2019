@@ -31,27 +31,17 @@ public class GameManager : MonoBehaviour
     {
         if (!m_gamePaused)
         {
-            foreach (var player in m_players)
+            foreach (var character in m_characters)
             {
-                if (player.gameObject.activeInHierarchy)
-                {
-                    player.SetNewDestination();
-                }
-            }
-
-            foreach (var mummy in m_mummies)
-            {
-                mummy.GoToNextPoint();
+                character.Updater();
             }
 
             m_cameraMovement.MoveCamera();
         }
-    }
 
-    private void FixedUpdate()
-    {
         m_fpsCounter.CalculateFPS();
     }
+
     private void GameOver()
     {
         m_gamePaused = true;
@@ -74,9 +64,7 @@ public class GameManager : MonoBehaviour
     [Space(10)]
 
     [SerializeField]
-    private List<PlayerNavigation> m_players;
-    [SerializeField]
-    private List<MummyNavigation> m_mummies;
+    private List<Character> m_characters;
 
     private bool m_gamePaused = true;
     private int m_totalGems = 10;

@@ -2,9 +2,14 @@
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class MummyNavigation : MonoBehaviour
+public class MummyNavigation : Character
 {
-    public void GoToNextPoint()
+    override public void Updater()
+    {
+        GoToNextPoint();
+    }
+
+    private void GoToNextPoint()
     {
         if (!m_navAgent.pathPending && m_navAgent.remainingDistance < 0.5f)
         {

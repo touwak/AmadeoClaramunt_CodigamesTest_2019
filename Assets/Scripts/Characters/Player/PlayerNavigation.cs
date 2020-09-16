@@ -2,20 +2,33 @@
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class PlayerNavigation : MonoBehaviour
+public class PlayerNavigation : Character
 {
     private void Start()
     {
         m_mainCamera = Camera.main;
     }
 
-    public void SetNewDestination()
+    override public void Updater()
+    {
+        SetNewDestination();
+    }
+
+    private void SetNewDestination()
     {
         if (Input.touchCount == 1)
         {
-            if (Input.GetTouch(0).phase != TouchPhase.Moved)
+            if (Input.GetTouch(0).phase == TouchPhase.Moved)
             {
-                if (Input.GetTouch(0).phase == TouchPhase.Ended)
+                m_startMovement = false;
+            }
+            else if (Input.GetTouch(0).phase == TouchPhase.Began)
+            {
+                m_startMovement = true;
+            }
+            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
+            {
+                if (m_startMovement)
                 {
                     Ray screenRay = m_mainCamera.ScreenPointToRay(Input.GetTouch(0).position);
                     RaycastHit hit;
@@ -49,7 +62,9 @@ public class PlayerNavigation : MonoBehaviour
     private NavMeshAgent m_navAgent;
     [SerializeField]
     private Animator m_playerAnimator;
+    
     private Camera m_mainCamera;
+    private bool m_startMovement = false;
     
     private const float k_nextPositionRadius = 2.0f;
 }
