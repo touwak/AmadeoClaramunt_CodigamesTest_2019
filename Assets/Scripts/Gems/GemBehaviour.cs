@@ -4,6 +4,11 @@ using UnityEngine;
 [RequireComponent(typeof(BoxCollider))]
 public class GemBehaviour : MonoBehaviour
 {
+    private void Start()
+    {
+        transform.DOLocalMoveY(-transform.parent.position.y + 0.5f, 2f).SetEase(Ease.Linear).SetLoops(-1, LoopType.Yoyo);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
