@@ -76,6 +76,8 @@ public class PlayerBehaviour : Character
         {
             m_isDead = true;
             m_playerAnimator.SetTrigger("Dying");
+            m_deadParticle.Play();
+            m_navAgent.isStopped = true;
 
             yield return m_dyingTime;
 
