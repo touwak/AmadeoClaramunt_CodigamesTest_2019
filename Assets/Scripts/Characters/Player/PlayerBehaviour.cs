@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using UnityEngine;
 using UnityEngine.AI;
 
 [RequireComponent(typeof(NavMeshAgent))]
-public class PlayerNavigation : Character
+public class PlayerBehaviour : Character
 {
     private void Start()
     {
@@ -11,7 +12,10 @@ public class PlayerNavigation : Character
 
     override public void Updater()
     {
-        SetNewDestination();
+        if (!m_isDead)
+        {
+            SetNewDestination();
+        }
     }
 
     private void SetNewDestination()
@@ -58,13 +62,49 @@ public class PlayerNavigation : Character
         return navHit.position;
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.collider.CompareTag("Mummy"))
+        {
+            StartCoroutine(Dying());
+        }
+    }
+
+    private IEnumerator Dying()
+    {
+        if (!m_isDead)
+        {
+            m_isDead = true;
+            m_playerAnimator.SetTrigger("Dying");
+
+            yield return m_dyingTime;
+
+            m_gameManager.RemovePlayer();
+            gameObject.SetActive(false);
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("Gem"))
+        {
+            m_playerAnimator.SetTrigger("PickUp");
+        }
+    }
+
     [SerializeField]
     private NavMeshAgent m_navAgent;
     [SerializeField]
     private Animator m_playerAnimator;
-    
+    [SerializeField]
+    private GameManager m_gameManager;
+    [SerializeField]
+    private ParticleSystem m_deadParticle;
+
     private Camera m_mainCamera;
     private bool m_startMovement = false;
+    private bool m_isDead = false;
+    private WaitForSeconds m_dyingTime = new WaitForSeconds(2.3f);
     
     private const float k_nextPositionRadius = 2.0f;
 }

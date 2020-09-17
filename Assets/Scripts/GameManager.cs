@@ -1,10 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
     public void RemovePlayer()
     {
+        m_camera.DOShakePosition(0.5f);
         if (m_Hud.RemoveLife() <= 0)
         {
             GameOver();
@@ -60,6 +62,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     private CameraMovement m_cameraMovement;
+    [SerializeField]
+    private Transform m_camera;
 
     [Space(10)]
 
