@@ -4,5 +4,5 @@ using UnityEngine;
 
 public abstract class Character : MonoBehaviour
 {
-    abstract public void Updater();
+    abstract public void Navigation(Vector3 position);
 }

@@ -5,44 +5,19 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class PlayerBehaviour : Character
 {
-    private void Start()
-    {
-        m_mainCamera = Camera.main;
-    }
-
-    override public void Updater()
+    override public void Navigation(Vector3 position)
     {
         if (!m_isDead)
         {
-            SetNewDestination();
+            SetNewDestination(position);
         }
     }
 
-    private void SetNewDestination()
+    private void SetNewDestination(Vector3 position)
     {
-        if (Input.touchCount == 1)
+        if (position != Vector3.zero)
         {
-            if (Input.GetTouch(0).phase == TouchPhase.Moved)
-            {
-                m_startMovement = false;
-            }
-            else if (Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                m_startMovement = true;
-            }
-            else if (Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                if (m_startMovement)
-                {
-                    Ray screenRay = m_mainCamera.ScreenPointToRay(Input.GetTouch(0).position);
-                    RaycastHit hit;
-
-                    if (Physics.Raycast(screenRay, out hit))
-                    {
-                        m_navAgent.SetDestination(RandomNavPoint(hit.point, -1));
-                    }
-                }
-            }
+            m_navAgent.SetDestination(RandomNavPoint(position, -1));
         }
 
         if (m_navAgent.velocity.magnitude > 0f)
@@ -91,6 +66,7 @@ public class PlayerBehaviour : Character
         if (other.CompareTag("Gem"))
         {
             m_playerAnimator.SetTrigger("PickUp");
+            m_pickUpParticle.Play();
         }
     }
 
@@ -100,11 +76,14 @@ public class PlayerBehaviour : Character
     private Animator m_playerAnimator;
     [SerializeField]
     private GameManager m_gameManager;
+    
+    [Space(10)]
+    
     [SerializeField]
     private ParticleSystem m_deadParticle;
+    [SerializeField]
+    private ParticleSystem m_pickUpParticle;
 
-    private Camera m_mainCamera;
-    private bool m_startMovement = false;
     private bool m_isDead = false;
     private WaitForSeconds m_dyingTime = new WaitForSeconds(2.3f);
     

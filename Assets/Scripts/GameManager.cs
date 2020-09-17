@@ -35,7 +35,7 @@ public class GameManager : MonoBehaviour
         {
             foreach (var character in m_characters)
             {
-                character.Updater();
+                character.Navigation(m_playerNavigator.GetTouchPosition());
             }
 
             m_cameraMovement.MoveCamera();
@@ -57,6 +57,8 @@ public class GameManager : MonoBehaviour
     private PopUp m_endPopUp;
     [SerializeField]
     private FPSCounter m_fpsCounter;
+    [SerializeField]
+    private PlayerNavigator m_playerNavigator;
 
     [Space(10)]
 
