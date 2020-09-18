@@ -4,7 +4,7 @@ using UnityEngine.AI;
 [RequireComponent(typeof(NavMeshAgent))]
 public class MummyNavigation : Character
 {
-    override public void Updater()
+    override public void Navigation(Vector3 position)
     {
         GoToNextPoint();
     }
